@@ -36,8 +36,6 @@ Each page has its own URL, so the browser's back and forward buttons work and yo
 
 Double-click `index.html`, or drag it into any modern browser (Chrome, Edge, Firefox, Safari).
 
-Then open http://localhost:8000 (or the URL that `serve` prints).
-
 ## Project structure
 
 ```
