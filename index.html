@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Expense Tracker</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <div class="app">
+    <!-- Sidebar menu (slide-out drawer on small screens) -->
+    <aside class="sidebar" id="sidebar" aria-label="Main menu">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h12v4"/><path d="M3 7v10a2 2 0 0 0 2 2h14V9H5a2 2 0 0 1-2-2z"/><circle cx="16" cy="14" r="1.2" fill="currentColor"/></svg>
+        </span>
+        <span>Expense Tracker</span>
+      </div>
+
+      <nav>
+        <ul class="nav">
+          <li>
+            <a href="#/dashboard" class="nav-link" data-route="dashboard">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+              Dashboard
+            </a>
+          </li>
+          <li>
+            <a href="#/transactions" class="nav-link" data-route="transactions">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></svg>
+              Transactions
+            </a>
+            <ul class="subnav">
+              <li>
+                <a href="#/transactions/add" class="nav-link sub" data-route="add">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  Add Transaction
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <a href="#/monthly" class="nav-link" data-route="monthly">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              Monthly Summary
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <p class="sidebar-foot">Data is saved in this browser.</p>
+    </aside>
+
+    <div class="backdrop hidden" id="backdrop"></div>
+
+    <div class="main-area">
+      <!-- Top bar (small screens only) -->
+      <header class="topbar">
+        <button type="button" class="menu-btn" id="menu-btn" aria-controls="sidebar" aria-expanded="false" aria-label="Open menu">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+        </button>
+        <span class="topbar-title">Expense Tracker</span>
+      </header>
+
+      <main id="main" class="container">
+
+        <!-- ================= Dashboard ================= -->
+        <section class="view" data-view="dashboard" aria-labelledby="dashboard-title">
+          <div class="page-head">
+            <h1 id="dashboard-title" tabindex="-1">Dashboard</h1>
+            <a class="btn btn-primary" href="#/transactions/add">+ Add Transaction</a>
+          </div>
+
+          <div class="summary" aria-label="Totals">
+            <div class="card stat stat-balance">
+              <span class="stat-label">Current Balance</span>
+              <span class="stat-value" id="total-balance">$0.00</span>
+            </div>
+            <div class="card stat stat-income">
+              <span class="stat-label">Total Income</span>
+              <span class="stat-value" id="total-income">$0.00</span>
+            </div>
+            <div class="card stat stat-expense">
+              <span class="stat-label">Total Expenses</span>
+              <span class="stat-value" id="total-expense">$0.00</span>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <section class="card" aria-labelledby="chart-title">
+              <div class="card-head">
+                <h2 id="chart-title">Expenses by Category</h2>
+                <label class="sr-only" for="chart-month">Period</label>
+                <select id="chart-month" class="compact-select"></select>
+              </div>
+              <div class="chart" id="category-chart"></div>
+            </section>
+
+            <section class="card" aria-labelledby="recent-title">
+              <div class="card-head">
+                <h2 id="recent-title">Recent Transactions</h2>
+                <a class="link" href="#/transactions">View all</a>
+              </div>
+              <ul class="transaction-list" id="recent-list"></ul>
+              <p class="empty-state hidden" id="recent-empty">
+                No transactions yet. <a class="link" href="#/transactions/add">Add your first one</a>.
+              </p>
+            </section>
+          </div>
+        </section>
+
+        <!-- ================= Transactions ================= -->
+        <section class="view" data-view="transactions" aria-labelledby="transactions-title" hidden>
+          <div class="page-head">
+            <h1 id="transactions-title" tabindex="-1">Transactions</h1>
+            <a class="btn btn-primary" href="#/transactions/add">+ Add Transaction</a>
+          </div>
+
+          <section class="card" aria-label="Transaction list">
+            <div class="filters">
+              <div class="field">
+                <label for="filter-type">Type</label>
+                <select id="filter-type">
+                  <option value="all">All</option>
+                  <option value="income">Income</option>
+                  <option value="expense">Expense</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="filter-category">Category</label>
+                <select id="filter-category"></select>
+              </div>
+              <div class="field">
+                <label for="filter-month">Month</label>
+                <select id="filter-month"></select>
+              </div>
+            </div>
+
+            <div class="list-toolbar">
+              <p class="muted list-count" id="list-count" aria-live="polite"></p>
+              <button type="button" class="btn-clear" id="clear-filters" disabled>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
+                Clear filters
+              </button>
+            </div>
+            <ul class="transaction-list" id="transaction-list"></ul>
+            <p class="empty-state hidden" id="empty-state">No transactions found.</p>
+
+            <nav class="pagination hidden" id="pagination" aria-label="Transaction pages">
+              <p class="muted page-info" id="page-info" aria-live="polite"></p>
+              <div class="page-controls" id="page-controls">
+                <button type="button" class="page-btn" id="page-prev" aria-label="Previous page">
+                  <span aria-hidden="true">&#8249;</span><span class="page-label">Prev</span>
+                </button>
+                <ul class="page-numbers" id="page-numbers"></ul>
+                <button type="button" class="page-btn" id="page-next" aria-label="Next page">
+                  <span class="page-label">Next</span><span aria-hidden="true">&#8250;</span>
+                </button>
+              </div>
+              <div class="page-size">
+                <label for="page-size">Rows per page</label>
+                <select id="page-size" class="compact-select">
+                  <option value="5">5</option>
+                  <option value="10" selected>10</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                </select>
+              </div>
+            </nav>
+          </section>
+        </section>
+
+        <!-- ================= Add / Edit Transaction ================= -->
+        <section class="view" data-view="form" aria-labelledby="form-title" hidden>
+          <div class="page-head">
+            <h1 id="form-title" tabindex="-1">Add Transaction</h1>
+            <a class="link" href="#/transactions">&larr; Back to transactions</a>
+          </div>
+
+          <section class="card form-card">
+            <form id="transaction-form" novalidate>
+              <fieldset class="type-toggle">
+                <legend>Type</legend>
+                <label class="toggle-option">
+                  <input type="radio" name="type" value="expense" checked>
+                  <span>Expense</span>
+                </label>
+                <label class="toggle-option">
+                  <input type="radio" name="type" value="income">
+                  <span>Income</span>
+                </label>
+              </fieldset>
+
+              <div class="field">
+                <label for="amount">Amount</label>
+                <input type="number" id="amount" name="amount" step="0.01" min="0" inputmode="decimal" placeholder="0.00">
+                <p class="error" id="amount-error" aria-live="polite"></p>
+              </div>
+
+              <div class="field">
+                <label for="category">Category</label>
+                <select id="category" name="category"></select>
+                <p class="error" id="category-error" aria-live="polite"></p>
+              </div>
+
+              <div class="field">
+                <label for="date" id="date-label">Date</label>
+                <div class="datepicker" id="datepicker">
+                  <button type="button" id="date" class="date-trigger" aria-haspopup="dialog" aria-expanded="false"
+                          aria-controls="calendar" aria-labelledby="date-label date-display" aria-describedby="date-error">
+                    <span id="date-display">Select a date</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+                      <line x1="16" y1="2" x2="16" y2="6"></line>
+                      <line x1="8" y1="2" x2="8" y2="6"></line>
+                      <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                  </button>
+
+                  <div class="calendar hidden" id="calendar" role="dialog" aria-modal="false" aria-labelledby="cal-title">
+                    <div class="cal-header">
+                      <button type="button" class="cal-nav" id="cal-prev" aria-label="Previous month">&#8249;</button>
+                      <span class="cal-title" id="cal-title" aria-live="polite"></span>
+                      <button type="button" class="cal-nav" id="cal-next" aria-label="Next month">&#8250;</button>
+                    </div>
+                    <div class="cal-weekdays" id="cal-weekdays" aria-hidden="true"></div>
+                    <div class="cal-days" id="cal-days"></div>
+                    <div class="cal-footer">
+                      <button type="button" class="cal-link" id="cal-today">Today</button>
+                      <button type="button" class="cal-link" id="cal-close">Close</button>
+                    </div>
+                  </div>
+                </div>
+                <p class="error" id="date-error" aria-live="polite"></p>
+              </div>
+
+              <div class="field">
+                <label for="description">Description</label>
+                <input type="text" id="description" name="description" maxlength="100" placeholder="e.g. Weekly groceries">
+                <p class="error" id="description-error" aria-live="polite"></p>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary" id="submit-btn">Add Transaction</button>
+                <button type="button" class="btn btn-secondary" id="cancel-edit-btn">Cancel</button>
+              </div>
+            </form>
+          </section>
+        </section>
+
+        <!-- ================= Monthly Summary ================= -->
+        <section class="view" data-view="monthly" aria-labelledby="monthly-title" hidden>
+          <div class="page-head">
+            <h1 id="monthly-title" tabindex="-1">Monthly Summary</h1>
+          </div>
+
+          <section class="card">
+            <div class="table-wrap">
+              <table class="monthly-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Month</th>
+                    <th scope="col" class="num">Income</th>
+                    <th scope="col" class="num">Expenses</th>
+                    <th scope="col" class="num">Net</th>
+                  </tr>
+                </thead>
+                <tbody id="monthly-body"></tbody>
+                <tfoot id="monthly-foot"></tfoot>
+              </table>
+            </div>
+            <p class="empty-state hidden" id="monthly-empty">
+              No data yet. <a class="link" href="#/transactions/add">Add a transaction</a>.
+            </p>
+            <p class="muted hint" id="monthly-hint">Select a month to see its transactions.</p>
+          </section>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <div class="toast hidden" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
